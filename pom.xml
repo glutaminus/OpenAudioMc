@@ -75,13 +75,11 @@
     <url>https://openaudiomc.net/</url>
 
     <modules>
-        <module>modules/jutils</module>
         <module>api</module>
         <module>plugin</module>
         <module>modules/voice-join-permission</module>
         <module>modules/vistas-client</module>
         <module>modules/vistas-server</module>
-        <module>modules/mapdb-migrator</module>
         <module>modules/parties-module</module>
         <module>modules/skywars-module</module>
     </modules>
