@@ -12,108 +12,29 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Proxy;
 import java.util.Set;
 
-@AllArgsConstructor
-public class FakeCommandSender implements CommandSender {
+public abstract interface FakeCommandSender extends CommandSender {
 
-    @Getter private World world;
-
-    @Override
-    public void sendMessage(@NotNull String message) {
-
+    // create a proxy class for a command sender, where getWorld will return a given world and isOp will return a given boolean
+    static FakeCommandSender createCommandSenderProxy(World world) {
+        FakeCommandSender sender = (FakeCommandSender) Proxy.newProxyInstance(
+                FakeCommandSender.class.getClassLoader(),
+                new Class[]{FakeCommandSender.class},
+                (proxy, method, args) -> {
+                    if (method.getName().equals("getWorld")) {
+                        return world;
+                    } else if (method.getName().equals("isOp")) {
+                        return true;
+                    } else {
+                        throw new UnsupportedOperationException("Method " + method.getName() + " is not supported");
+                    }
+                }
+        );
+        return sender;
     }
 
-    @Override
-    public void sendMessage(@NotNull String[] messages) {
+    World getWorld();
 
-    }
-
-    @NotNull
-    @Override
-    public Server getServer() {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public Spigot spigot() {
-        return null;
-    }
-
-    @Override
-    public boolean isPermissionSet(@NotNull String name) {
-        return false;
-    }
-
-    @Override
-    public boolean isPermissionSet(@NotNull Permission perm) {
-        return false;
-    }
-
-    @Override
-    public boolean hasPermission(@NotNull String name) {
-        return false;
-    }
-
-    @Override
-    public boolean hasPermission(@NotNull Permission perm) {
-        return false;
-    }
-
-    @NotNull
-    @Override
-    public PermissionAttachment addAttachment(@NotNull Plugin plugin, @NotNull String name, boolean value) {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public PermissionAttachment addAttachment(@NotNull Plugin plugin) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public PermissionAttachment addAttachment(@NotNull Plugin plugin, @NotNull String name, boolean value, int ticks) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public PermissionAttachment addAttachment(@NotNull Plugin plugin, int ticks) {
-        return null;
-    }
-
-    @Override
-    public void removeAttachment(@NotNull PermissionAttachment attachment) {
-
-    }
-
-    @Override
-    public void recalculatePermissions() {
-
-    }
-
-    @NotNull
-    @Override
-    public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-        return null;
-    }
-
-    @Override
-    public boolean isOp() {
-        return false;
-    }
-
-    @Override
-    public void setOp(boolean value) {
-
-    }
 }

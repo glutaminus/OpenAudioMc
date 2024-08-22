@@ -1,0 +1,123 @@
+plugins {
+    id("java") // Apply the Java plugin
+    id("maven-publish") // Apply the Maven Publish plugin
+    id("com.gradleup.shadow") version "8.3.0" // Apply the Shadow plugin for shading
+}
+
+group = "com.craftmend.openaudiomc"
+version = __oaVersion as String
+
+description = "The OpenAudioMc Java plugin and API"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    maven {
+        url = uri("https://repo.codemc.org/repository/maven-public/")
+    }
+    maven {
+        url = uri("https://oss.sonatype.org/content/groups/public/")
+    }
+    maven {
+        url = uri("https://papermc.io/repo/repository/maven-public/")
+    }
+    maven {
+        url = uri("https://hub.spigotmc.org/nexus/content/groups/public/")
+    }
+    maven {
+        url = uri("https://maven.enginehub.org/repo/")
+    }
+    maven {
+        url = uri("https://jitpack.io")
+    }
+    maven {
+        url = uri("https://ci.mg-dev.eu/plugin/repository/everything")
+    }
+    maven {
+        url = uri("https://repo.essentialsx.net/snapshots/")
+    }
+    maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+    }
+    maven {
+        url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    }
+}
+
+
+dependencies {
+    implementation(project(":api")) // assuming the api module is declared in settings.gradle.kts
+
+    testImplementation("com.coreoz:wisp:2.4.0")
+
+    compileOnly("org.spigotmc:spigot-api:${_spigotVersion}")
+    compileOnly("com.sk89q:worldguard:${_legacyWorldguardVersion}")
+    compileOnly("com.sk89q.worldguard:worldguard-core:${_worldguardVersion}")
+    compileOnly("com.github.SpigotMC.BungeeCord:bungeecord-proxy:${_bungeeProxyVersion}")
+    compileOnly("com.github.SpigotMC.BungeeCord:bungeecord-protocol:${_bungeeProtocolVersion}")
+    compileOnly("com.github.SpigotMC.BungeeCord:bungeecord-api:${_bungeeApiVersion}")
+    compileOnly("com.bergerkiller.bukkit:TrainCarts:${_traincartsVersion}")
+    compileOnly("com.bergerkiller.bukkit:BKCommonLib:${_bkcommonlibVersion}")
+    compileOnly("com.velocitypowered:velocity-api:${_velocityApiVersion}")
+    compileOnly("com.gitlab.ruany:LiteBansAPI:${_litebansVersion}")
+    compileOnly("net.essentialsx:EssentialsX:${_essentialsXVersion}")
+    compileOnly("me.clip:placeholderapi:${_placeholderApiVersion}")
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:${_worldeditVersion}")
+
+    implementation("de.tr7zw:item-nbt-api:${_nbtApiVersion}")
+    implementation("org.yaml:snakeyaml:2.0")
+    implementation("io.lettuce:lettuce-core:6.3.0.RELEASE")
+    implementation("org.nanohttpd:nanohttpd:2.3.1")
+    implementation 'commons-codec:commons-codec:1.17.1'
+
+    implementation("com.squareup.okhttp3:okhttp:${_okhttpVersion}") {
+        exclude group: "com.google.android", module: "android"
+    }
+
+    implementation("io.socket:socket.io-client:1.0.0")
+    implementation("com.github.Mindgamesnl:storm:${_stormVersion}")
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+    implementation("org.xerial:sqlite-jdbc:3.36.0.3")
+
+    annotationProcessor("org.projectlombok:lombok:${_lombokVersion}")
+    compileOnly("org.projectlombok:lombok:${_lombokVersion}")
+
+    testImplementation("junit:junit:4.13.2")
+}
+
+shadowJar {
+    archiveFileName.set("openaudiomc-${__oaVersion}.jar")
+    archiveClassifier.set("")
+    mergeServiceFiles()
+    relocate("de.tr7zw.changeme.nbtapi", "com.craftmend.thirdparty.nbt")
+    relocate("io.", "com.craftmend.thirdparty.io") {
+        exclude("io.netty.channel.Channel")
+        exclude("io.netty.channel.ChannelPipeline")
+        exclude("io.netty.channel.ChannelHandler")
+    }
+    relocate("com.google", "com.craftmend.thirdparty.google")
+    relocate("fi.iki.elonen", "com.craftmend.thirdparty.fi.iki.elonen")
+    relocate("org.json.", "com.craftmend.thirdparty.json")
+    relocate("reactor.", "com.craftmend.thirdparty.reactor")
+    relocate("okhttp3", "com.craftmend.thirdparty.okhttp3")
+    relocate("okio", "com.craftmend.thirdparty.okio")
+    relocate("org.projectlombok", "com.craftmend.thirdparty.org")
+    relocate("org.mapdb", "com.craftmend.thirdparty.mapdb")
+    relocate("kotlin", "com.craftmend.thirdparty.kotlin")
+    relocate("lombok", "com.craftmend.thirdparty.lombok")
+    relocate("org", "com.craftmend.thirdparty.org")
+    relocate("com.zwitserloot.cmdreader", "com.craftmend.thirdparty.cmdreader")
+}
+
+// run shadowJar instead of jar
+tasks.named("jar") {
+    dependsOn("shadowJar")
+}
+
+// run shadowJar instead of build
+tasks.named("build") {
+    dependsOn("shadowJar")
+}

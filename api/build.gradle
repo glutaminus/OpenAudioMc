@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'io.franzbecker.gradle-lombok' version '3.3.0'
+}
+
+group = 'com.craftmend.openaudiomc'
+version = "${__oaVersion}" // equivalent to ${oa.version} in Maven
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://hub.spigotmc.org/nexus/content/groups/public/'
+        name 'spigotmc-repo'
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains:annotations:${_jetbrainsAnnotVersion}"
+    compileOnly "org.projectlombok:lombok:${_lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${_lombokVersion}"
+    compileOnly "org.spigotmc:spigot-api:${_spigotVersion}"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', "${buildDir}/delombok"]
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+task delombok(type: JavaExec) {
+    main = 'lombok.launch.Main'
+    classpath = configurations.annotationProcessor + sourceSets.main.compileClasspath
+    args = ['delombok', 'src/main/java', '-d', "${buildDir}/delombok"]
+    doFirst {
+        file("${buildDir}/delombok").mkdirs()
+    }
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+    source = fileTree(dir: "${buildDir}/delombok", include: '**/*.java')
+}
+
+jar {
+    from sourceSets.main.allSource
+    archiveBaseName.set('openaudiomc-api')
+}

@@ -38,7 +38,7 @@ public class ChatRunnable extends ShowRunnable {
         if (args.length < 1) return;
 
         SpigotPlayerSelector spigotPlayerSelector = new SpigotPlayerSelector();
-        spigotPlayerSelector.setSender(new SpigotUserAdapter(new FakeCommandSender(Bukkit.getWorld(worldName))));
+        spigotPlayerSelector.setSender(new SpigotUserAdapter(FakeCommandSender.createCommandSenderProxy(Bukkit.getWorld(worldName))));
         spigotPlayerSelector.setString(args[0]);
 
         String[] subArgs = new String[args.length - 1];

@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group = 'com.craftmend.openaudiomc'
+version = '1.2'
+description = 'The OpenAudioMc Java plugin and Api'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+ext {
+    __oaVersion = '6.10.3'
+
+    // Dev dependencies
+    _lombokVersion = '1.18.30'
+    _lombokMvnVersion = '1.18.20.0'
+    _jetbrainsAnnotVersion = '24.1.0'
+
+    // Production dependencies
+    _spigotVersion = '1.13.2-R0.1-SNAPSHOT'
+    _okhttpVersion = '4.7.0'
+    _velocityApiVersion = '3.0.1'
+    _stormVersion = 'e1f961b'
+    _nbtApiVersion = '2.13.2'
+
+    // Bungeecord dependencies
+    _bungeeProxyVersion = 'b23a51825e'
+    _bungeeProtocolVersion = _bungeeProxyVersion
+    _bungeeApiVersion = _bungeeProxyVersion
+
+    // Integrations
+    _legacyWorldguardVersion = '6.1'
+    _worldguardVersion = '7.0.5'
+    _worldeditVersion = '7.0.0-SNAPSHOT'
+    _traincartsVersion = '1.15.2-v2-SNAPSHOT'
+    _bkcommonlibVersion = _traincartsVersion
+    _litebansVersion = '0.3.4'
+    _essentialsXVersion = '2.19.0-SNAPSHOT'
+    _placeholderApiVersion = '2.10.9'
+}

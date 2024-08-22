@@ -1,0 +1,87 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'com.craftmend.openaudiomc'
+version = "${__oaVersion}"
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        name 'spigotmc-repo'
+    }
+    maven {
+        url 'https://oss.sonatype.org/content/groups/public/'
+        name 'sonatype'
+    }
+    maven {
+        url 'https://repo.alessiodp.com/releases/'
+        name 'alessiodp-repo'
+    }
+}
+
+dependencies {
+    implementation project(':plugin')
+    implementation "org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT"
+    testImplementation "junit:junit:4.13.2"
+    implementation project(':plugin')
+    implementation "com.coreoz:wisp:2.4.0"
+    implementation "com.google.code.gson:gson:2.8.9"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.craftmend.vistas.server.VistasBoot'
+        )
+    }
+    archiveBaseName.set('vistas-server')
+    archiveFileName.set("vistas-server-${version}.jar")
+    from sourceSets.main.output
+}
+
+shadowJar {
+    archiveClassifier.set("")
+    archiveFileName.set("vistas-server-${version}.jar")
+    relocate('de.tr7zw.changeme.nbtapi', 'com.craftmend.thirdparty.nbt')
+    relocate('io.', 'com.craftmend.thirdparty.io')
+    relocate('org.json.', 'com.craftmend.thirdparty.json')
+    relocate('reactor.', 'com.craftmend.thirdparty.reactor')
+    relocate('okhttp3', 'com.craftmend.thirdparty.okhttp3')
+    relocate('okio', 'com.craftmend.thirdparty.okio')
+    relocate('org.projectlombok', 'com.craftmend.thirdparty.org')
+    relocate('org.mapdb', 'com.craftmend.thirdparty.mapdb')
+    relocate('kotlin', 'com.craftmend.thirdparty.kotlin')
+}
+
+test {
+    useJUnitPlatform()
+
+    // Exclude specific dependencies during testing
+    configurations.testRuntimeClasspath {
+        exclude group: 'com.bergerkiller.bukkit', module: 'TrainCarts'
+        exclude group: 'com.bergerkiller.bukkit', module: 'BKCommonLib'
+    }
+
+    // JVM args
+    jvmArgs = ['-Xmx1024m', '-XX:+HeapDumpOnOutOfMemoryError', '-XX:HeapDumpPath=/home/mats/Desktop']
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact shadowJar
+        }
+    }
+}

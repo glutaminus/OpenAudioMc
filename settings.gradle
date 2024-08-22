@@ -1,0 +1,7 @@
+rootProject.name = 'OpenAudioMc-Parent'
+
+include 'api'
+include 'plugin'
+include 'modules:voice-join-permission'
+include 'modules:vistas-client'
+include 'modules:vistas-server'

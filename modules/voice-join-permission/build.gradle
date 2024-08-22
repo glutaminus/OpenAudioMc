@@ -1,0 +1,61 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'com.craftmend'
+version = "${__oaVersion}" // equivalent to ${oa.version} in Maven
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        name 'spigotmc-repo'
+    }
+    maven {
+        url 'https://oss.sonatype.org/content/groups/public/'
+        name 'sonatype'
+    }
+}
+
+dependencies {
+    compileOnly project(':plugin')
+    compileOnly "org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    archiveBaseName.set('voice-join-permission')
+    archiveFileName.set("voice-join-permission-${version}.jar")
+    from sourceSets.main.output
+}
+
+shadowJar {
+    archiveClassifier.set("")
+    archiveFileName.set("voice-join-permission-${version}.jar")
+    relocate('de.tr7zw.changeme.nbtapi', 'com.craftmend.thirdparty.nbt')
+    relocate('io.', 'com.craftmend.thirdparty.io')
+    relocate('org.json.', 'com.craftmend.thirdparty.json')
+    relocate('reactor.', 'com.craftmend.thirdparty.reactor')
+    relocate('okhttp3', 'com.craftmend.thirdparty.okhttp3')
+    relocate('okio', 'com.craftmend.thirdparty.okio')
+    relocate('org.projectlombok', 'com.craftmend.thirdparty.org')
+    relocate('org.mapdb', 'com.craftmend.thirdparty.mapdb')
+    relocate('kotlin', 'com.craftmend.thirdparty.kotlin')
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact shadowJar
+        }
+    }
+}

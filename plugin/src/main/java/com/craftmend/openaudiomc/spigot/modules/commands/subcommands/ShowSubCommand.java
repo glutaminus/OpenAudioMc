@@ -9,9 +9,10 @@ import com.craftmend.openaudiomc.spigot.modules.commands.subcommands.show.*;
 import com.craftmend.openaudiomc.spigot.modules.show.ShowService;
 import com.craftmend.openaudiomc.spigot.modules.show.menu.ShowHomeMenu;
 import com.craftmend.openaudiomc.spigot.modules.show.objects.Show;
-import org.apache.logging.log4j.util.Strings;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class ShowSubCommand extends SubCommand {
 
@@ -106,13 +107,24 @@ public class ShowSubCommand extends SubCommand {
         }
 
         if (args[0].equalsIgnoreCase("list")) {
-            String names = Strings.join(OpenAudioMc.getService(ShowService.class).getAllShows(), ',');
+            String names = join(OpenAudioMc.getService(ShowService.class).getAllShows(), ',');
             names = ChatColor.AQUA + names.replaceAll(",", ChatColor.GRAY + ", " + ChatColor.AQUA + "");
             message(sender, "All local shows: " + names);
             return;
         }
 
         sender.makeExecuteCommand("oa help " + getCommand());
+    }
+
+    private static String join(List<String> list, char separator) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            if (i > 0) {
+                sb.append(separator);
+            }
+            sb.append(list.get(i));
+        }
+        return sb.toString();
     }
 
 }
