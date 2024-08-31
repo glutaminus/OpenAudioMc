@@ -136,6 +136,11 @@ export const MessageModule = new class MessageModule {
         name: 'Čeština',
         visible: true,
       },
+      cs: {
+        file: 'th.lang',
+        name: 'ภาษาไทย',
+        visible: true,
+      },
     };
 
     this.load = this.load.bind(this);
